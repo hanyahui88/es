@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.UUIDs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -30,7 +30,7 @@ public class CreateIndex {
     this.esComponent = esComponent;
   }
 
-  @RequestMapping(value = "/createIndex", method = RequestMethod.POST)
+  @RequestMapping(value = "/createIndex")
   public Result createDoc() throws JsonProcessingException {
     Result successInstants = Result.getSuccessInstants();
     Map<String, String> map = Maps.newHashMap();
@@ -38,7 +38,7 @@ public class CreateIndex {
     map.put("age", "29");
     map.put("name", "alvin111111");
     TransportClient transportClient = esComponent.newInstance();
-    IndexResponse indexResponse = transportClient.prepareIndex("my_index", "user", "1").setSource(map).get();
+    IndexResponse indexResponse = transportClient.prepareIndex("my_index", "user", UUIDs.randomBase64UUID()).setSource(map).get();
     ObjectMapper objectMapper = new ObjectMapper();
     System.out.println(indexResponse.getId());
     System.out.println(objectMapper.writeValueAsString(indexResponse.getResult()));

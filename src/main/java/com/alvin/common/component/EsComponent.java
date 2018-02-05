@@ -1,7 +1,7 @@
 package com.alvin.common.component;
 
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -30,13 +30,13 @@ public class EsComponent {
   /**
    * 集群名称.
    */
-  @Value("spring.data.elasticsearch.cluster-name")
+  @Value("${spring.data.elasticsearch.cluster-name}")
   private String clusterName;
 
   /**
    * 节点，形式 127.0.0.1:9300.
    */
-  @Value("spring.data.elasticsearch.cluster-nodes")
+  @Value("${spring.data.elasticsearch.cluster-nodes}")
   private String clusterNode;
 
   private static TransportClient transportClient;
@@ -83,15 +83,6 @@ public class EsComponent {
   private class IpAddress {
     private InetAddress inetAddress;
     private int port;
-  }
-
-  public static void main(String[] args) {
-    String ip = "127.0.0.1";
-    byte[] bytes = ip.getBytes();
-    for (byte aByte : bytes) {
-
-      System.out.println(aByte);
-    }
   }
 
 }
