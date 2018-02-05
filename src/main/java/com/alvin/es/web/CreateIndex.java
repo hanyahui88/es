@@ -1,47 +1,49 @@
 package com.alvin.es.web;
 
+import com.alvin.common.component.EsComponent;
 import com.alvin.common.result.Result;
-import com.alvin.es.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
+import java.util.Map;
 
+/**
+ * 创建index.
+ *
+ * @author 亚辉a
+ */
 @RestController
-@RequestMapping("index")
+@RequestMapping("/index")
 public class CreateIndex {
-    @RequestMapping(value = "createIndex", method = RequestMethod.POST)
-    public Result createDoc() {
-        Result successInstants = Result.getSuccessInstants();
-        ObjectMapper objectMapper = new ObjectMapper();
-        TransportClient client = null;
-        User user = new User();
-        user.setAddress("beijingshi");
-        user.setAge(28);
-        user.setName("alvin");
 
-        try {
-            Settings settings = Settings.builder()
-                    .put("cluster.name", "my-application").build();
-            client = new PreBuiltTransportClient(settings);
-            IndexResponse indexResponse = client.prepareIndex("my_index", "user").setSource(user).get();
-            System.out.println(indexResponse.getId());
-            System.out.println(objectMapper.writeValueAsString(indexResponse.getResult()));
-            System.out.println(objectMapper.writeValueAsString(indexResponse.getShardInfo()));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            if (Objects.nonNull(client)) {
-                client.close();
-            }
-        }
-        return successInstants;
+  private final EsComponent esComponent;
 
-    }
+  @Autowired
+  public CreateIndex(EsComponent esComponent) {
+    this.esComponent = esComponent;
+  }
+
+  @RequestMapping(value = "/createIndex", method = RequestMethod.POST)
+  public Result createDoc() throws JsonProcessingException {
+    Result successInstants = Result.getSuccessInstants();
+    Map<String, String> map = Maps.newHashMap();
+    map.put("address", "beijing");
+    map.put("age", "29");
+    map.put("name", "alvin111111");
+    TransportClient transportClient = esComponent.newInstance();
+    IndexResponse indexResponse = transportClient.prepareIndex("my_index", "user", "1").setSource(map).get();
+    ObjectMapper objectMapper = new ObjectMapper();
+    System.out.println(indexResponse.getId());
+    System.out.println(objectMapper.writeValueAsString(indexResponse.getResult()));
+    System.out.println(objectMapper.writeValueAsString(indexResponse.getShardInfo()));
+    return successInstants;
+
+  }
 }

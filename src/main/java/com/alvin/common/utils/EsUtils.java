@@ -1,4 +1,10 @@
 package com.alvin.common.utils;
 
-public class EsUtils {
+/**
+ * es utils.
+ *
+ * @author 韩亚辉
+ */
+public final class EsUtils {
+
 }
